@@ -26,18 +26,18 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      overflow-y: auto;
+      justify-content: center;
+      height: 100vh;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+    /* Simple Switch Toggle Styling */
     .theme-switch-container {
       position: absolute;
       top: 20px;
       right: 20px;
       display: flex;
       align-items: center;
-      z-index: 100;
     }
 
     .switch {
@@ -82,17 +82,6 @@
       transform: translateX(20px);
     }
 
-    .main-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      width: 100%;
-      padding: 40px 20px;
-      box-sizing: border-box;
-    }
-
     .search-container {
       width: 100%;
       max-width: 584px;
@@ -101,13 +90,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: sticky;
-      top: 0;
-      background-color: var(--bg-color);
-      padding-top: 30px;
-      padding-bottom: 30px;
-      z-index: 50;
-      transition: background-color 0.3s ease;
+      margin-top: -30px;
     }
 
     .logo {
@@ -128,13 +111,12 @@
       width: 100%;
       display: flex;
       align-items: center;
-      border: 3px solid var(--border-color);
+      border: 3px solid var(--border-color); /* Extra thick black/white outline */
       border-radius: 28px;
       padding: 0 18px;
       height: 48px;
       box-sizing: border-box;
       transition: box-shadow 0.2s ease;
-      background-color: var(--bg-color);
     }
 
     .search-input-wrapper:hover, .search-input-wrapper:focus-within {
@@ -189,16 +171,6 @@
     body.dark-mode .pill-btn:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
-
-    .content-section {
-      width: 100%;
-      max-width: 800px;
-      padding: 40px 20px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
   </style>
 </head>
 <body class="dark-mode">
@@ -210,29 +182,23 @@
     </label>
   </div>
 
-  <div class="main-wrapper" id="mainWrapper">
-    <div class="search-container" id="searchContainer">
-      <div class="logo">
-        Search
+  <div class="search-container">
+    <div class="logo">
+      Search
+    </div>
+
+    <form class="search-bar-form" action="https://www.google.com/search" method="get">
+      <div class="search-input-wrapper">
+        <input type="text" name="q" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
       </div>
 
-      <form class="search-bar-form" action="https://www.google.com/search" method="get">
-        <div class="search-input-wrapper">
-          <input type="text" name="q" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
-        </div>
-
-        <div class="category-menu">
-          <button type="button" class="pill-btn" onclick="submitCategory('flights')">Flights</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('hotels and resorts')">Hotels & Resorts</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('restaurants')">Restaurants</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('maps')">Maps</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="content-section">
-      <!-- Future widgets or content go here -->
-    </div>
+      <div class="category-menu">
+        <button type="button" class="pill-btn" onclick="submitCategory('flights')">Flights</button>
+        <button type="button" class="pill-btn" onclick="submitCategory('hotels and resorts')">Hotels & Resorts</button>
+        <button type="button" class="pill-btn" onclick="submitCategory('restaurants')">Restaurants</button>
+        <button type="button" class="pill-btn" onclick="submitCategory('maps')">Maps</button>
+      </div>
+    </form>
   </div>
 
   <script>
@@ -245,13 +211,7 @@
         body.classList.remove('dark-mode');
       }
     }
-
-    function submitCategory(category) {
-      const input = document.querySelector('.search-input');
-      input.value = category;
-      input.form.submit();
-    }
   </script>
 
 </body>
-</html>
+  </html>
