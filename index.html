@@ -160,7 +160,7 @@
       gap: 20px;
     }
 
-    /* --- Google Programmable Search Styling Overrides --- */
+    /* --- Google Search Element Overrides for Plus Jakarta Sans --- */
     .gsc-control-cse {
       background-color: transparent !important;
       border: none !important;
@@ -168,16 +168,19 @@
       padding: 0 !important;
       width: 100% !important;
     }
-    .gsc-search-box {
-      margin-bottom: 0 !important;
-    }
-    /* Force input box to inherit your custom style */
-    input.gsc-input, .gsc-input-box, .gsc-input-box-hover {
+    input.gsc-input, .gsc-input-box {
       background-color: var(--bg-color) !important;
       color: var(--text-color) !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
+      border: 3px solid var(--border-color) !important;
+      border-radius: 28px !important;
+      padding: 0 18px !important;
+      height: 48px !important;
     }
-    .gsc-resultsRoot, .gsc-webResult, .gs-title, .gs-snippet {
+    .gsc-search-button-v2 {
+      display: none !important; /* Hide default ugly button since we match your style */
+    }
+    .gsc-resultsRoot, .gs-title, .gs-snippet {
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       color: var(--text-color) !important;
     }
@@ -201,9 +204,10 @@
         Search
       </div>
 
-      <!-- Google Programmable Search Element Integration -->
+      <!-- Google Custom Search Integration Script -->
       <script async src="https://cse.google.com/cse.js?cx=d2e501877c4674cd6"></script>
-      <div class="gcse-search"></div>
+      <!-- Split Layout: Search box goes here -->
+      <div class="gcse-searchbox" data-resultsUrl="" data-newWindow="false"></div>
 
       <div class="category-menu">
         <button type="button" class="pill-btn" onclick="submitCategory('flights')">Flights</button>
@@ -214,7 +218,8 @@
     </div>
 
     <div class="content-section">
-      <!-- Search results load here dynamically via Google's widget -->
+      <!-- Split Layout: Search results load here -->
+      <div class="gcse-searchresults"></div>
     </div>
   </div>
 
@@ -233,6 +238,9 @@
       const input = document.querySelector('input.gsc-input');
       if (input) {
         input.value = category;
+        const event = new Event('keyup');
+        input.dispatchEvent(event);
+        // Trigger search form submit programmatically
         const form = input.closest('form');
         if (form) form.submit();
       }
