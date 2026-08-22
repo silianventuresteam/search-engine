@@ -31,7 +31,6 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Simple Switch Toggle Styling */
     .theme-switch-container {
       position: absolute;
       top: 20px;
@@ -83,7 +82,6 @@
       transform: translateX(20px);
     }
 
-    /* Centered initial layout wrapper */
     .main-wrapper {
       display: flex;
       flex-direction: column;
@@ -103,7 +101,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* Sticky behavior implementation */
       position: sticky;
       top: 0;
       background-color: var(--bg-color);
@@ -113,7 +110,6 @@
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* Optional subtle shadow when scrolled */
     .search-container.scrolled {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
@@ -201,7 +197,6 @@
       background-color: rgba(255, 255, 255, 0.1);
     }
 
-    /* Content section for your widgets below */
     .content-section {
       width: 100%;
       max-width: 800px;
@@ -251,7 +246,6 @@
       </form>
     </div>
 
-    <!-- Widgets Section (Weather, News, Ads) placed below -->
     <div class="content-section">
       <div class="widget-placeholder">
         Weather & News Widgets / Ad Impressions Area
@@ -276,7 +270,6 @@
       input.form.submit();
     }
 
-    // Optional subtle shadow toggle on scroll
     window.addEventListener('scroll', () => {
       const container = document.getElementById('searchContainer');
       if (window.scrollY > 10) {
