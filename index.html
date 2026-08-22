@@ -86,7 +86,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex: 1;
       width: 100%;
       padding: 40px 20px;
@@ -115,59 +115,6 @@
       font-weight: 600;
       margin-bottom: 30px;
       letter-spacing: -1px;
-    }
-
-    .search-bar-form {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .search-input-wrapper {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      border: 3px solid var(--border-color);
-      border-radius: 28px;
-      padding: 0 18px;
-      height: 48px;
-      box-sizing: border-box;
-      transition: box-shadow 0.2s ease;
-      background-color: var(--bg-color);
-    }
-
-    .search-input-wrapper:hover, .search-input-wrapper:focus-within {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    body.dark-mode .search-input-wrapper:hover, 
-    body.dark-mode .search-input-wrapper:focus-within {
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
-    }
-
-    .search-icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 12px;
-      fill: none;
-      stroke: var(--text-color);
-      stroke-width: 2.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      flex-shrink: 0;
-      transition: stroke 0.3s ease;
-    }
-
-    .search-input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      font-size: 16px;
-      color: var(--text-color);
-      padding: 0 4px;
     }
 
     .category-menu {
@@ -206,11 +153,36 @@
     .content-section {
       width: 100%;
       max-width: 800px;
-      padding: 40px 20px;
+      padding: 20px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    /* --- Google Programmable Search Styling Overrides --- */
+    .gsc-control-cse {
+      background-color: transparent !important;
+      border: none !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+    .gsc-search-box {
+      margin-bottom: 0 !important;
+    }
+    /* Force input box to inherit your custom style */
+    input.gsc-input, .gsc-input-box, .gsc-input-box-hover {
+      background-color: var(--bg-color) !important;
+      color: var(--text-color) !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+    .gsc-resultsRoot, .gsc-webResult, .gs-title, .gs-snippet {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      color: var(--text-color) !important;
+    }
+    body.dark-mode .gs-title *, body.dark-mode .gs-snippet * {
+      color: var(--text-color) !important;
     }
   </style>
 </head>
@@ -229,26 +201,20 @@
         Search
       </div>
 
-      <form class="search-bar-form" action="https://www.google.com/search" method="get">
-        <div class="search-input-wrapper">
-          <svg class="search-icon" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" name="q" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
-        </div>
+      <!-- Google Programmable Search Element Integration -->
+      <script async src="https://cse.google.com/cse.js?cx=d2e501877c4674cd6"></script>
+      <div class="gcse-search"></div>
 
-        <div class="category-menu">
-          <button type="button" class="pill-btn" onclick="submitCategory('flights')">Flights</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('hotels and resorts')">Hotels & Resorts</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('restaurants')">Restaurants</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('maps')">Maps</button>
-        </div>
-      </form>
+      <div class="category-menu">
+        <button type="button" class="pill-btn" onclick="submitCategory('flights')">Flights</button>
+        <button type="button" class="pill-btn" onclick="submitCategory('hotels and resorts')">Hotels & Resorts</button>
+        <button type="button" class="pill-btn" onclick="submitCategory('restaurants')">Restaurants</button>
+        <button type="button" class="pill-btn" onclick="submitCategory('maps')">Maps</button>
+      </div>
     </div>
 
     <div class="content-section">
-      <!-- Future widgets or content go here -->
+      <!-- Search results load here dynamically via Google's widget -->
     </div>
   </div>
 
@@ -264,9 +230,12 @@
     }
 
     function submitCategory(category) {
-      const input = document.querySelector('.search-input');
-      input.value = category;
-      input.form.submit();
+      const input = document.querySelector('input.gsc-input');
+      if (input) {
+        input.value = category;
+        const form = input.closest('form');
+        if (form) form.submit();
+      }
     }
   </script>
 
