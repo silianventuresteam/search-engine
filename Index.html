@@ -93,6 +93,7 @@
       box-sizing: border-box;
     }
 
+    /* Sticky Search Bar Container */
     .search-container {
       width: 100%;
       max-width: 584px;
@@ -107,21 +108,34 @@
       padding-top: 20px;
       padding-bottom: 20px;
       z-index: 50;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
     }
 
+    /* When scrolled: applies shadow and tightens padding */
     .search-container.scrolled {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
     body.dark-mode .search-container.scrolled {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
+    /* Big Logo / Title in Center */
     .logo {
       font-size: 48px;
       font-weight: 600;
       margin-bottom: 30px;
       letter-spacing: -1px;
+      transition: opacity 0.2s ease, height 0.2s ease, margin 0.2s ease;
+    }
+
+    /* Hide Big Logo when scrolled */
+    .search-container.scrolled .logo {
+      opacity: 0;
+      height: 0;
+      margin-bottom: 0;
+      overflow: hidden;
     }
 
     .search-bar-form {
@@ -153,6 +167,20 @@
       box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
     }
 
+    /* Small Icon that appears inside the input wrapper when scrolled */
+    .sticky-icon {
+      font-size: 18px;
+      font-weight: 600;
+      margin-right: 12px;
+      display: none;
+      letter-spacing: -0.5px;
+      user-select: none;
+    }
+
+    .search-container.scrolled .sticky-icon {
+      display: inline-block;
+    }
+
     .search-input {
       flex: 1;
       border: none;
@@ -170,6 +198,12 @@
       justify-content: center;
       margin-top: 24px;
       flex-wrap: wrap;
+      transition: margin 0.2s ease;
+    }
+
+    /* Tighten spacing for categories when scrolled */
+    .search-container.scrolled .category-menu {
+      margin-top: 12px;
     }
 
     .pill-btn {
@@ -225,6 +259,7 @@
 
       <form class="search-bar-form" action="https://www.google.com/search" method="get">
         <div class="search-input-wrapper">
+          <span class="sticky-icon">S</span>
           <input type="text" name="q" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
         </div>
 
@@ -238,7 +273,7 @@
     </div>
 
     <div class="content-section">
-      <!-- Future widgets or ad tags go here cleanly -->
+      <!-- Future widgets or content go here -->
     </div>
   </div>
 
@@ -261,7 +296,7 @@
 
     window.addEventListener('scroll', () => {
       const container = document.getElementById('searchContainer');
-      if (window.scrollY > 10) {
+      if (window.scrollY > 15) {
         container.classList.add('scrolled');
       } else {
         container.classList.remove('scrolled');
