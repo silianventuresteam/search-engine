@@ -362,16 +362,16 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" id="searchInput" class="search-input" autofocus autocomplete="off" placeholder="Search anything...">
+          <input type="text" id="searchInput" class="search-input" autofocus autocomplete="off" placeholder="Search products, services, items...">
           <button type="submit" class="go-btn">Go</button>
         </div>
       </form>
 
       <!-- Filter Bar -->
       <div class="filter-bar" id="filterBar">
-        <button class="filter-chip active" onclick="applyFilter('all', this)">All Results</button>
-        <button class="filter-chip" onclick="applyFilter('location', this)">Location</button>
-        <button class="filter-chip" onclick="applyFilter('price', this)">Est. Price</button>
+        <button class="filter-chip active" onclick="applyFilter('all', this)">All Offerings</button>
+        <button class="filter-chip" onclick="applyFilter('location', this)">Location / Hub</button>
+        <button class="filter-chip" onclick="applyFilter('price', this)">Price / Rate</button>
         <button class="filter-chip" onclick="applyFilter('category', this)">Category</button>
       </div>
     </div>
@@ -382,7 +382,7 @@
       </div>
 
       <div class="comparison-section" id="comparisonSection">
-        <h3 id="comparisonTitle">Option Comparison</h3>
+        <h3 id="comparisonTitle">Commercial Matrix</h3>
         <div class="table-responsive">
           <table class="comparison-table">
             <thead>
@@ -414,7 +414,7 @@
 
       const carousel = document.getElementById('carouselContainer');
       const filterBar = document.getElementById('filterBar');
-      carousel.innerHTML = '<p style="padding:20px;">Searching web results...</p>';
+      carousel.innerHTML = '<p style="padding:20px;">Scanning commercial database...</p>';
       filterBar.classList.remove('active');
 
       try {
@@ -481,7 +481,7 @@
         return item.image;
       }
       const targetTerm = encodeURIComponent(item.title || query);
-      return `https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=500&q=80&sig=${targetTerm}`;
+      return `https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=500&q=80&sig=${targetTerm}`;
     }
 
     function renderCarousel(results, query) {
@@ -509,9 +509,9 @@
 
     async function renderFallbackCarousel(query) {
       const mockItems = [
-        { title: query + " - Overview", content: "Explore key details, history, and background information regarding " + query + "." },
-        { title: query + " - Core Options", content: "Comprehensive selection of services, features, and specs related to " + query + "." },
-        { title: "Global Alternatives to " + query, content: "Top-rated comparative alternatives and trusted market options." }
+        { title: query + " - Premium Offering", content: "Top-tier commercial grade specification available for immediate deployment." },
+        { title: query + " - Standard Vendor Package", content: "Cost-effective baseline configuration for standard operational use." },
+        { title: query + " - Bulk Enterprise Solution", content: "High-volume supply arrangement with dedicated support contracts." }
       ];
 
       await enrichImagesWithWikipedia(mockItems);
@@ -525,10 +525,10 @@
 
       let filtered = [...globalResults];
       if (filterType === 'location') {
-        filtered = globalResults.filter(item => /mombasa|kenya|nairobi|hotel|property|location/i.test(item.title + " " + item.content));
+        filtered = globalResults.filter(item => /mombasa|kenya|nairobi|hub|branch|location/i.test(item.title + " " + item.content));
         if (filtered.length === 0) filtered = globalResults;
       } else if (filterType === 'price') {
-        filtered = globalResults.filter(item => /price|rate|cost|value|ksh|\$/i.test(item.title + " " + item.content));
+        filtered = globalResults.filter(item => /price|rate|ksh|\$|cost|fee|valuation/i.test(item.title + " " + item.content));
         if (filtered.length === 0) filtered = globalResults;
       } else if (filterType === 'category') {
         filtered = globalResults.reverse();
@@ -538,77 +538,97 @@
 
     const industrySchemas = {
       retail: {
-        headers: ['Item / Product', 'Estimated Price', 'Availability / Store', 'Action'],
-        actionText: 'View Store',
+        headers: ['Product / Item', 'Est. Price', 'Supplier / Stock', 'Action'],
+        actionText: 'Buy Now',
         rows: [
-          { col1: 'Premium Choice Item', col2: 'Ksh 240.00', col3: 'In Stock / Local Branch' },
-          { col1: 'Standard Alternative', col2: 'Ksh 130.00', col3: 'In Stock / Aisle 4' },
-          { col1: 'Bulk Package Deal', col2: 'Ksh 550.00', col3: 'High Demand / Limited' }
+          { col1: 'Premium Retail Unit', col2: 'Ksh 2,450', col3: 'In Stock / Local Hub' },
+          { col1: 'Standard Commercial Grade', col2: 'Ksh 1,200', col3: 'Ready to Ship' },
+          { col1: 'Bulk Package Deal', col2: 'Ksh 9,800', col3: 'Direct Distributor' }
         ]
       },
-      aviation: {
-        headers: ['Flight / Route', 'Scheduled Time', 'Gate / Status', 'Action'],
-        actionText: 'Flight Info',
+      localservice: {
+        headers: ['Service Type', 'Hourly / Flat Rate', 'Provider / Contractor', 'Action'],
+        actionText: 'Book Service',
         rows: [
-          { col1: 'KQ 602 (Nairobi)', col2: '06:00 AM', col3: 'Gate 3 / On Time' },
-          { col1: 'ET 308 (Addis Ababa)', col2: '09:30 AM', col3: 'Gate 1 / Boarding' },
-          { col1: 'QR 1341 (Doha)', col2: '01:15 PM', col3: 'Gate 4 / Scheduled' }
+          { col1: 'On-Site Technician Call', col2: 'Ksh 1,500 / hr', col3: 'Verified Professional' },
+          { col1: 'Maintenance Package', col2: 'Ksh 5,000 / visit', col3: 'Licensed Team' },
+          { col1: 'Emergency Response', col2: 'Ksh 3,500 flat', col3: '24/7 Availability' }
         ]
       },
       hospitality: {
-        headers: ['Property / Room', 'Nightly Rate', 'Amenities', 'Action'],
-        actionText: 'Book Room',
+        headers: ['Listing / Accommodation', 'Nightly Rate', 'Location & Perks', 'Action'],
+        actionText: 'Reserve',
         rows: [
-          { col1: 'Deluxe Suite', col2: '$240.00', col3: 'Ocean View / King Bed' },
-          { col1: 'Standard Room', col2: '$130.00', col3: 'City View / Queen Bed' },
-          { col1: 'Executive Penthouse', col2: '$550.00', col3: 'Private Pool / Lounge' }
+          { col1: 'Executive Suite', col2: '$180 / night', col3: 'Ocean View / Full Board' },
+          { col1: 'Standard Room', col2: '$85 / night', col3: 'City Center / Wi-Fi' },
+          { col1: 'Extended Stay Villa', col2: '$350 / night', col3: 'Private Access / Pool' }
+        ]
+      },
+      b2b: {
+        headers: ['Professional Service', 'Retainer / Fee', 'Firm / Agency', 'Action'],
+        actionText: 'Consult',
+        rows: [
+          { col1: 'Legal Compliance Audit', col2: '$1,200', col3: 'Senior Partner' },
+          { col1: 'Tax & Accounting Setup', col2: '$450 / mo', col3: 'CPA Certified' },
+          { col1: 'Corporate Advisory', col2: '$2,500 project', col3: 'Syndicate Lead' }
+        ]
+      },
+      digitalservice: {
+        headers: ['Platform / Tool', 'Monthly Fee', 'Core Features', 'Action'],
+        actionText: 'Subscribe',
+        rows: [
+          { col1: 'Cloud Infrastructure Node', col2: '$40 / mo', col3: '99.9% Uptime / NVMe' },
+          { col1: 'SaaS Business Suite', col2: '$99 / mo', col3: 'Unlimited Users' },
+          { col1: 'Managed Hosting Environment', col2: '$25 / mo', col3: 'Automated Backups' }
+        ]
+      },
+      transport: {
+        headers: ['Vehicle / Route', 'Rental / Fare', 'Dealership / App', 'Action'],
+        actionText: 'Rent / Buy',
+        rows: [
+          { col1: 'SUV Fleet Vehicle', col2: '$90 / day', col3: 'Unlimited Mileage' },
+          { col1: 'Electric City Sedan', col2: '$45,000 MSRP', col3: 'AWD / Long Range' },
+          { col1: 'Logistics Freight Run', col2: 'Ksh 12,000', col3: 'Insured Cargo' }
         ]
       },
       realestate: {
-        headers: ['Asset / Location', 'Valuation', 'Cap Rate / Yield', 'Action'],
-        actionText: 'View Listing',
+        headers: ['Property Asset', 'Valuation / Rent', 'Agent / Mandate', 'Action'],
+        actionText: 'Inquire',
         rows: [
-          { col1: 'Commercial Block A', col2: '$1,250,000', col3: '8.4% Yield' },
-          { col1: 'Residential Villa', col2: '$450,000', col3: '6.2% Yield' },
-          { col1: 'Mixed-Use Plot', col2: '$300,000', col3: 'High Growth' }
+          { col1: 'Commercial Office Block', col2: '$850,000', col3: '8.5% Net Yield' },
+          { col1: 'Residential Apartment', col2: '$1,200 / mo', col3: 'Gated Community' },
+          { col1: 'Mixed-Use Development Plot', col2: '$220,000', col3: 'Clean Title Deed' }
         ]
       },
-      finance: {
-        headers: ['Instrument', 'Price / NAV', '24h Change', 'Action'],
-        actionText: 'Trade',
+      digitalproducts: {
+        headers: ['Digital Asset / Item', 'License Price', 'Creator / Source', 'Action'],
+        actionText: 'Download',
         rows: [
-          { col1: 'S&P 500 ETF', col2: '$512.40', col3: '+1.25%' },
-          { col1: 'Treasury Bond 10Y', col2: '$98.50', col3: '-0.15%' },
-          { col1: 'Global Index Fund', col2: '$145.20', col3: '+0.84%' }
-        ]
-      },
-      automotive: {
-        headers: ['Model / Trim', 'MSRP / Price', 'Specs / Range', 'Action'],
-        actionText: 'Configure',
-        rows: [
-          { col1: 'Performance EV', col2: '$78,500', col3: '380 mi / AWD' },
-          { col1: 'Long Range Sedan', col2: '$52,000', col3: '420 mi / RWD' },
-          { col1: 'Urban Compact', col2: '$34,000', col3: '250 mi / FWD' }
+          { col1: 'Enterprise Software License', col2: '$299', col3: 'Lifetime Updates' },
+          { col1: 'Financial Modeling Kit', col2: '$49', col3: 'Spreadsheet Template' },
+          { col1: 'UI Design System Bundle', col2: '$79', col3: 'Multi-User Access' }
         ]
       },
       default: {
-        headers: ['Provider / Model', 'Price / Value', 'Key Feature', 'Action'],
+        headers: ['Commercial Offering', 'Price / Terms', 'Supplier / Source', 'Action'],
         actionText: 'View Deal',
         rows: [
-          { col1: 'Vendor Alpha', col2: '$999.00', col3: 'In Stock / Fast Ship' },
-          { col1: 'Global Distributor', col2: '$950.00', col3: 'Standard Delivery' },
-          { col1: 'Direct Retailer', col2: '$975.00', col3: 'Extended Warranty' }
+          { col1: 'Primary Package Option', col2: '$499.00', col3: 'In Stock / Verified' },
+          { col1: 'Alternative Solution', col2: '$450.00', col3: 'Standard Dispatch' },
+          { col1: 'Enterprise Bundle', col2: '$899.00', col3: 'Direct Contract' }
         ]
       }
     };
 
     function detectIndustry(text) {
-      if (/naivas|carrefour|supermarket|bread|milk|grocery|store|market|shop|mall|retail/i.test(text)) return 'retail';
-      if (/airport|flight|airline|aviation|route/i.test(text)) return 'aviation';
-      if (/hotel|resort|room|stay|bnb|accommodation|prideinn/i.test(text)) return 'hospitality';
-      if (/property|apartment|house|real estate|land|villa/i.test(text)) return 'realestate';
-      if (/stock|crypto|bond|forex|fund|shares|etf|trading/i.test(text)) return 'finance';
-      if (/car|vehicle|electric|tesla|sedan|suv|automotive/i.test(text)) return 'automotive';
+      if (/naivas|carrefour|supermarket|grocery|store|shop|mall|retail|shirt|shoes|phone|laptop|hardware|apparel/i.test(text)) return 'retail';
+      if (/salon|plumb|clean|repair|mechanic|electric|contractor|security|pest|laundry|barber/i.test(text)) return 'localservice';
+      if (/hotel|resort|stay|bnb|flight|airline|travel|tour|accommodation|vacation/i.test(text)) return 'hospitality';
+      if (/legal|lawyer|account|tax|consult|marketing|audit|agency|advisory|b2b/i.test(text)) return 'b2b';
+      if (/hosting|saas|cloud|domain|storage|software|subscription|api|server/i.test(text)) return 'digitalservice';
+      if (/car|vehicle|suv|sedan|transport|fleet|rental|uber|flight|delivery|freight/i.test(text)) return 'transport';
+      if (/property|house|apartment|real estate|land|villa|plot|commercial block|lease/i.test(text)) return 'realestate';
+      if (/ebook|license|download|template|course|asset|pdf|kit|code/i.test(text)) return 'digitalproducts';
       return 'default';
     }
 
@@ -618,7 +638,7 @@
       const headerRow = document.getElementById('tableHeaderRow');
       const tbody = document.getElementById('comparisonTableBody');
 
-      title.innerText = `Smart Context: ${item.title}`;
+      title.innerText = `Commercial Matrix: ${item.title}`;
       section.classList.add('active');
 
       const combinedText = (item.title + " " + item.content + " " + query).toLowerCase();
