@@ -399,6 +399,7 @@
         }
 
         if (results.length > 0) {
+          await enrichImagesWithWikipedia(results);
           renderCarousel(results, query);
         } else {
           renderFallbackCarousel(query);
@@ -408,14 +409,31 @@
       }
     }
 
+    async function enrichImagesWithWikipedia(results) {
+      for (let item of results) {
+        try {
+          const searchTerm = item.title.split(' - ')[0].trim();
+          const wikiRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(searchTerm)}&prop=pageimages&pithumbsize=500&format=json&origin=*`);
+          const wikiData = await wikiRes.json();
+          const pages = wikiData.query.pages;
+          for (let pageId in pages) {
+            if (pages[pageId].thumbnail && pages[pageId].thumbnail.source) {
+              item.image = pages[pageId].thumbnail.source;
+              break;
+            }
+          }
+        } catch (e) {
+          // Fall back to existing image logic if wiki fetch fails
+        }
+      }
+    }
+
     function getCardImage(item, query) {
-      if (item.image && item.image.length > 21) {
+      if (item.image && item.image.length > 10) {
         return item.image;
       }
-
-      // Dynamic Unsplash keyword fallback targeting any entity/place/brand typed in
       const targetTerm = encodeURIComponent(item.title || query);
-      return `https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=300&q=80&sig=${targetTerm}`;
+      return `https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=500&q=80&sig=${targetTerm}`;
     }
 
     function renderCarousel(results, query) {
@@ -429,7 +447,7 @@
         
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80'">
+            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80'">
           </div>
           <div class="card-content">
             <h3>${item.title}</h3>
@@ -441,7 +459,7 @@
       });
     }
 
-    function renderFallbackCarousel(query) {
+    async function renderFallbackCarousel(query) {
       const carousel = document.getElementById('carouselContainer');
       carousel.innerHTML = '';
       
@@ -451,6 +469,8 @@
         { title: "Global Alternatives to " + query, content: "Top-rated comparative alternatives and trusted market options." }
       ];
 
+      await enrichImagesWithWikipedia(mockItems);
+
       mockItems.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'carousel-card';
@@ -458,7 +478,7 @@
 
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80'">
+            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80'">
           </div>
           <div class="card-content">
             <h3>${item.title}</h3>
@@ -471,6 +491,15 @@
     }
 
     const industrySchemas = {
+      retail: {
+        headers: ['Item / Product', 'Estimated Price', 'Availability / Store', 'Action'],
+        actionText: 'View Store',
+        rows: [
+          { col1: 'Premium Choice Item', col2: 'Ksh 240.00', col3: 'In Stock / Local Branch' },
+          { col1: 'Standard Alternative', col2: 'Ksh 130.00', col3: 'In Stock / Aisle 4' },
+          { col1: 'Bulk Package Deal', col2: 'Ksh 550.00', col3: 'High Demand / Limited' }
+        ]
+      },
       aviation: {
         headers: ['Flight / Route', 'Scheduled Time', 'Gate / Status', 'Action'],
         actionText: 'Flight Info',
@@ -528,8 +557,9 @@
     };
 
     function detectIndustry(text) {
+      if (/naivas|carrefour|supermarket|bread|milk|grocery|store|market|shop|mall|retail/i.test(text)) return 'retail';
       if (/airport|flight|airline|aviation|route/i.test(text)) return 'aviation';
-      if (/hotel|resort|room|stay|bnb|accommodation/i.test(text)) return 'hospitality';
+      if (/hotel|resort|room|stay|bnb|accommodation|prideinn/i.test(text)) return 'hospitality';
       if (/property|apartment|house|real estate|land|villa/i.test(text)) return 'realestate';
       if (/stock|crypto|bond|forex|fund|shares|etf|trading/i.test(text)) return 'finance';
       if (/car|vehicle|electric|tesla|sedan|suv|automotive/i.test(text)) return 'automotive';
