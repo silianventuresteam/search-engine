@@ -11,6 +11,7 @@
       --text-color: #202124;
       --border-color: #000000;
       --card-bg: #f8f9fa;
+      --divider-color: rgba(128, 128, 128, 0.3);
     }
 
     body.dark-mode {
@@ -18,6 +19,7 @@
       --text-color: #e8eaed;
       --border-color: #ffffff;
       --card-bg: #303134;
+      --divider-color: rgba(255, 255, 255, 0.2);
     }
 
     body {
@@ -216,6 +218,19 @@
       border-color: #1a73e8;
     }
 
+    /* Section Divider Line */
+    .search-divider {
+      width: 100%;
+      height: 1px;
+      background-color: var(--divider-color);
+      margin-top: 18px;
+      display: none;
+    }
+
+    .search-divider.active {
+      display: block;
+    }
+
     /* Filter Bar Section */
     .filter-bar {
       width: 100%;
@@ -410,6 +425,9 @@
         <button class="suggestion-chip" onclick="searchPreset('Real Estate')">Real Estate</button>
       </div>
 
+      <!-- Divider Line -->
+      <div class="search-divider" id="searchDivider"></div>
+
       <!-- Filter Bar -->
       <div class="filter-bar" id="filterBar">
         <button class="filter-chip active" onclick="applyFilter('all', this)">All Offerings</button>
@@ -462,8 +480,11 @@
 
       const carousel = document.getElementById('carouselContainer');
       const filterBar = document.getElementById('filterBar');
+      const divider = document.getElementById('searchDivider');
+      
       carousel.innerHTML = '<p style="padding:20px;">Scanning commercial database...</p>';
       filterBar.classList.remove('active');
+      divider.classList.remove('active');
 
       try {
         const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(currentQuery)}&format=json&no_html=1`);
@@ -497,13 +518,16 @@
           globalResults = results;
           renderCarousel(globalResults, currentQuery);
           filterBar.classList.add('active');
+          divider.classList.add('active');
         } else {
           await renderFallbackCarousel(currentQuery);
           filterBar.classList.add('active');
+          divider.classList.add('active');
         }
       } catch (error) {
         await renderFallbackCarousel(currentQuery);
         filterBar.classList.add('active');
+        divider.classList.add('active');
       }
     }
 
