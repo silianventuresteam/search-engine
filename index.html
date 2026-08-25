@@ -375,24 +375,29 @@
       carousel.innerHTML = '<p style="padding:20px;">Searching web results...</p>';
 
       try {
-        const response = await fetch(`https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`));
+        const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1`);
         if (!response.ok) throw new Error('Network response failed');
-        const htmlText = await response.text();
+        const data = await response.json();
         
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
         const results = [];
         
-        doc.querySelectorAll('.result').forEach(el => {
-          const titleEl = el.querySelector('.result__title');
-          const snippetEl = el.querySelector('.result__snippet');
-          if (titleEl) {
-            results.push({
-              title: titleEl.innerText.trim(),
-              content: snippetEl ? snippetEl.innerText.trim() : 'Click to compare specs and pricing'
-            });
-          }
-        });
+        if (data.Heading && data.AbstractText) {
+          results.push({
+            title: data.Heading,
+            content: data.AbstractText
+          });
+        }
+
+        if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+          data.RelatedTopics.forEach(topic => {
+            if (topic.Text && topic.FirstURL) {
+              results.push({
+                title: topic.Text.split(' - ')[0] || topic.Text,
+                content: topic.Text
+              });
+            }
+          });
+        }
 
         if (results.length > 0) {
           renderCarousel(results, query);
