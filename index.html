@@ -268,6 +268,40 @@
     .content-section {
       width: 100%;
       margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Circular Rotating Loading Spinner */
+    .spinner-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      width: 100%;
+    }
+
+    .rotating-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3.5px solid rgba(26, 115, 232, 0.2);
+      border-top: 3.5px solid #1a73e8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    .spinner-text {
+      font-size: clamp(13px, 1.8vw, 14px);
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .carousel-container {
@@ -482,7 +516,13 @@
       const filterBar = document.getElementById('filterBar');
       const divider = document.getElementById('searchDivider');
       
-      carousel.innerHTML = '<p style="padding:20px;">Scanning commercial database...</p>';
+      // Replace text with circular rotating loading spinner
+      carousel.innerHTML = `
+        <div class="spinner-container">
+          <div class="rotating-spinner"></div>
+          <div class="spinner-text">Scanning commercial database...</div>
+        </div>
+      `;
       filterBar.classList.remove('active');
       divider.classList.remove('active');
 
