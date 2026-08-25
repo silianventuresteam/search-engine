@@ -381,7 +381,8 @@
         if (data.Heading && data.AbstractText) {
           results.push({
             title: data.Heading,
-            content: data.AbstractText
+            content: data.AbstractText,
+            image: data.Image ? `https://duckduckgo.com${data.Image}` : null
           });
         }
 
@@ -390,7 +391,8 @@
             if (topic.Text && topic.FirstURL) {
               results.push({
                 title: topic.Text.split(' - ')[0] || topic.Text,
-                content: topic.Text
+                content: topic.Text,
+                image: topic.Icon && topic.Icon.URL ? `https://duckduckgo.com${topic.Icon.URL}` : null
               });
             }
           });
@@ -406,26 +408,14 @@
       }
     }
 
-    function getCardImage(title, query) {
-      const text = (title + " " + query).toLowerCase();
-      
-      if (text.includes('airport') || text.includes('flight') || text.includes('airline') || text.includes('aviation')) {
-        return 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=300&q=80';
-      } else if (text.includes('laptop') || text.includes('macbook') || text.includes('computer')) {
-        return 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80';
-      } else if (text.includes('car') || text.includes('vehicle') || text.includes('electric') || text.includes('tesla') || text.includes('dubai')) {
-        return 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=300&q=80';
-      } else if (text.includes('phone') || text.includes('smartphone') || text.includes('iphone') || text.includes('samsung')) {
-        return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80';
-      } else if (text.includes('hotel') || text.includes('resort') || text.includes('travel')) {
-        return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=300&q=80';
-      } else if (text.includes('food') || text.includes('restaurant') || text.includes('cafe')) {
-        return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=80';
-      } else if (text.includes('crypto') || text.includes('bitcoin') || text.includes('finance') || text.includes('stock')) {
-        return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=300&q=80';
+    function getCardImage(item, query) {
+      if (item.image && item.image.length > 21) {
+        return item.image;
       }
-      
-      return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80';
+
+      // Dynamic Unsplash keyword fallback targeting any entity/place/brand typed in
+      const targetTerm = encodeURIComponent(item.title || query);
+      return `https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=300&q=80&sig=${targetTerm}`;
     }
 
     function renderCarousel(results, query) {
@@ -435,11 +425,11 @@
       results.slice(0, 6).forEach((item) => {
         const card = document.createElement('div');
         card.className = 'carousel-card';
-        const imgSrc = getCardImage(item.title, query);
+        const imgSrc = getCardImage(item, query);
         
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${imgSrc}" alt="${item.title}">
+            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80'">
           </div>
           <div class="card-content">
             <h3>${item.title}</h3>
@@ -456,19 +446,19 @@
       carousel.innerHTML = '';
       
       const mockItems = [
-        { title: query + " - Premium Edition", content: "Top-rated model featuring high performance and reliability." },
-        { title: query + " - Standard Choice", content: "Cost-effective option with standard industry features." },
-        { title: "Alternative " + query, content: "Highly recommended alternative choice from top vendors." }
+        { title: query + " - Overview", content: "Explore key details, history, and background information regarding " + query + "." },
+        { title: query + " - Core Options", content: "Comprehensive selection of services, features, and specs related to " + query + "." },
+        { title: "Global Alternatives to " + query, content: "Top-rated comparative alternatives and trusted market options." }
       ];
 
       mockItems.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'carousel-card';
-        const imgSrc = getCardImage(item.title, query);
+        const imgSrc = getCardImage(item, query);
 
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${imgSrc}" alt="${item.title}">
+            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80'">
           </div>
           <div class="card-content">
             <h3>${item.title}</h3>
