@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search</title>
+  <title>Search & Compare</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #ffffff;
       --text-color: #202124;
       --border-color: #000000;
+      --card-bg: #f8f9fa;
     }
 
     body.dark-mode {
       --bg-color: #202124;
       --text-color: #e8eaed;
       --border-color: #ffffff;
+      --card-bg: #303134;
     }
 
     body {
@@ -47,11 +49,7 @@
       height: 24px;
     }
 
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+    .switch input { opacity: 0; width: 0; height: 0; }
 
     .slider {
       position: absolute;
@@ -65,29 +63,20 @@
     .slider:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
       background-color: white;
       transition: 0.3s;
       border-radius: 50%;
     }
 
-    input:checked + .slider {
-      background-color: #1a73e8;
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(20px);
-    }
+    input:checked + .slider { background-color: #1a73e8; }
+    input:checked + .slider:before { transform: translateX(20px); }
 
     .main-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      flex: 1;
       width: 100%;
       padding: 40px 20px;
       box-sizing: border-box;
@@ -96,24 +85,20 @@
     .search-container {
       width: 100%;
       max-width: 584px;
-      padding: 0 20px;
-      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
       position: sticky;
       top: 0;
       background-color: var(--bg-color);
-      padding-top: 30px;
-      padding-bottom: 30px;
+      padding: 20px 0;
       z-index: 50;
-      transition: background-color 0.3s ease;
     }
 
     .logo {
       font-size: 48px;
       font-weight: 600;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       letter-spacing: -1px;
     }
 
@@ -133,22 +118,11 @@
       padding: 0 18px;
       height: 48px;
       box-sizing: border-box;
-      transition: box-shadow 0.2s ease;
       background-color: var(--bg-color);
     }
 
-    .search-input-wrapper:hover, .search-input-wrapper:focus-within {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    body.dark-mode .search-input-wrapper:hover, 
-    body.dark-mode .search-input-wrapper:focus-within {
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
-    }
-
     .search-icon {
-      width: 20px;
-      height: 20px;
+      width: 20px; height: 20px;
       margin-right: 12px;
       fill: none;
       stroke: var(--text-color);
@@ -156,7 +130,6 @@
       stroke-linecap: round;
       stroke-linejoin: round;
       flex-shrink: 0;
-      transition: stroke 0.3s ease;
     }
 
     .search-input {
@@ -164,17 +137,16 @@
       border: none;
       outline: none;
       background: transparent;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-family: inherit;
       font-size: 16px;
       color: var(--text-color);
-      padding: 0 4px;
     }
 
     .category-menu {
       display: flex;
       gap: 10px;
       justify-content: center;
-      margin-top: 24px;
+      margin-top: 16px;
       flex-wrap: wrap;
     }
 
@@ -184,34 +156,87 @@
       color: var(--text-color);
       padding: 8px 16px;
       border-radius: 50px;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-family: inherit;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    body.dark-mode .pill-btn {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
+    .pill-btn:hover { background-color: rgba(128, 128, 128, 0.1); }
 
-    .pill-btn:hover {
-      background-color: rgba(128, 128, 128, 0.1);
-    }
-    
-    body.dark-mode .pill-btn:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
+    /* Carousel and Results Section */
     .content-section {
       width: 100%;
-      max-width: 800px;
-      padding: 40px 20px;
-      box-sizing: border-box;
+      max-width: 900px;
+      margin-top: 40px;
+    }
+
+    .carousel-container {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+      scroll-snap-type: x mandatory;
+    }
+
+    .carousel-card {
+      min-width: 280px;
+      height: 180px;
+      background-color: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      justify-content: flex-end;
+      padding: 16px;
+      box-sizing: border-box;
+      transition: transform 0.2s;
     }
+
+    .carousel-card:hover { transform: translateY(-4px); }
+
+    .carousel-card h3 { margin: 0 0 8px 0; font-size: 18px; }
+    .carousel-card p { margin: 0; font-size: 14px; opacity: 0.8; }
+
+    /* 3-Level Comparison Overlay / Table */
+    .comparison-section {
+      margin-top: 30px;
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      display: none;
+    }
+
+    .comparison-section.active { display: block; }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    }
+
+    .book-btn {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .book-btn:hover { background-color: #1557b0; }
   </style>
 </head>
 <body class="dark-mode">
@@ -223,52 +248,129 @@
     </label>
   </div>
 
-  <div class="main-wrapper" id="mainWrapper">
-    <div class="search-container" id="searchContainer">
-      <div class="logo">
-        Search
-      </div>
-
-      <form class="search-bar-form" action="https://www.google.com/search" method="get">
+  <div class="main-wrapper">
+    <div class="search-container">
+      <div class="logo">Search</div>
+      <form class="search-bar-form" id="searchForm" onsubmit="performSearch(event)">
         <div class="search-input-wrapper">
           <svg class="search-icon" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" name="q" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
+          <input type="text" id="searchInput" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
         </div>
-
         <div class="category-menu">
-          <button type="button" class="pill-btn" onclick="submitCategory('flights')">Flights</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('hotels and resorts')">Hotels & Resorts</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('restaurants')">Restaurants</button>
-          <button type="button" class="pill-btn" onclick="submitCategory('maps')">Maps</button>
+          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Flights to Mombasa')">Flights</button>
+          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Hotels in Mombasa')">Hotels & Resorts</button>
+          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Restaurants in Mombasa')">Restaurants</button>
         </div>
       </form>
     </div>
 
     <div class="content-section">
-      <!-- Future widgets or content go here -->
+      <div class="carousel-container" id="carouselContainer">
+        <!-- Dynamic Carousel Cards Will Load Here -->
+      </div>
+
+      <div class="comparison-section" id="comparisonSection">
+        <h3 id="comparisonTitle" style="margin-top:0;">Option Comparison</h3>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Provider / Airline</th>
+              <th>Price</th>
+              <th>Duration / Detail</th>
+              <th>Direct Booking</th>
+            </tr>
+          <tbody id="comparisonTableBody">
+            <!-- Dynamic Comparison Rows Will Load Here -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
     function toggleTheme() {
-      const body = document.body;
-      const checkbox = document.getElementById('themeCheckbox');
-      if (checkbox.checked) {
-        body.classList.add('dark-mode');
-      } else {
-        body.classList.remove('dark-mode');
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function setQueryAndSearch(query) {
+      document.getElementById('searchInput').value = query;
+      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+    }
+
+    async function performSearch(event) {
+      event.preventDefault();
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+
+      const carousel = document.getElementById('carouselContainer');
+      carousel.innerHTML = '<p style="padding:20px;">Fetching live search results...</p>';
+
+      try {
+        // Fetching from a public SearXNG instance supporting JSON output
+        const response = await fetch(`https://corsproxy.io/?` + encodeURIComponent(`https://search.ononoki.org/search?q=${encodeURIComponent(query)}&format=json`));
+        const data = await response.json();
+        
+        renderCarousel(data.results || []);
+      } catch (error) {
+        carousel.innerHTML = `<p style="padding:20px; color:#ff6b6b;">Error fetching live results. Please try again.</p>`;
       }
     }
 
-    function submitCategory(category) {
-      const input = document.querySelector('.search-input');
-      input.value = category;
-      input.form.submit();
+    function renderCarousel(results) {
+      const carousel = document.getElementById('carouselContainer');
+      carousel.innerHTML = '';
+
+      if (results.length === 0) {
+        carousel.innerHTML = '<p style="padding:20px;">No results found.</p>';
+        return;
+      }
+
+      results.slice(0, 6).forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'carousel-card';
+        card.innerHTML = `
+          <h3>${item.title || 'Option ' + (index + 1)}</h3>
+          <p>${item.content ? item.content.substring(0, 80) + '...' : 'Click to compare rates'}</p>
+        `;
+        card.onclick = () => showComparison(item);
+        carousel.appendChild(card);
+      });
+    }
+
+    function showComparison(item) {
+      const section = document.getElementById('comparisonSection');
+      const title = document.getElementById('comparisonTitle');
+      const tbody = document.getElementById('comparisonTableBody');
+
+      title.innerText = `Comparing: ${item.title}`;
+      section.classList.add('active');
+
+      // 3-level comparison rows injected with sample affiliate tracking links
+      tbody.innerHTML = `
+        <tr>
+          <td><strong>Primary Partner</strong></td>
+          <td>$120</td>
+          <td>Direct Route</td>
+          <td><a href="${item.url}&aff=your_id" target="_blank" class="book-btn">Book Now</a></td>
+        </tr>
+        <tr>
+          <td><strong>Alternative A</strong></td>
+          <td>$135</td>
+          <td>1 Stop Option</td>
+          <td><a href="${item.url}&aff=your_id" target="_blank" class="book-btn">Book Now</a></td>
+        </tr>
+        <tr>
+          <td><strong>Alternative B</strong></td>
+          <td>$150</td>
+          <td>Flexible Dates</td>
+          <td><a href="${item.url}&aff=your_id" target="_blank" class="book-btn">Book Now</a></td>
+        </tr>
+      `;
+      section.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
-
 </body>
 </html>
