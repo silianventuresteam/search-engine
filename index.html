@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CurateSearch</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfmCQYQEjR+xX0TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHpJREFUeNrs1cERgCAAQEEwgnb+SVuARw8wM2gH4d9/42J32537c35HwD+fGABXAbwG8BoAkBqgAQwGUAwA4AoAwEoAAMAJAMAJAAAwAACAAQAAsAEAkAEAkAFAsAEAkAEA3CUAAGYA1o8r34O2s2oAAAAASUVORK5CYII=">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -120,26 +119,11 @@
       z-index: 50;
     }
 
-    .logo-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    .favicon-logo {
-      width: clamp(32px, 6vw, 44px);
-      height: clamp(32px, 6vw, 44px);
-      border-radius: 10px;
-      object-fit: cover;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
     .logo {
       font-size: clamp(32px, 6vw, 48px);
       font-weight: 600;
+      margin-bottom: 15px;
       letter-spacing: -1px;
-      margin: 0;
     }
 
     .search-bar-form {
@@ -338,10 +322,7 @@
 
   <div class="main-wrapper">
     <div class="search-container">
-      <div class="logo-wrapper">
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfmCQYQEjR+xX0TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHpJREFUeNrs1cERgCAAQEEwgnb+SVuARw8wM2gH4d9/42J32537c35HwD+fGABXAbwG8BoAkBqgAQwGUAwA4AwEvAAMAJAMAJAAAwAACAAQAAsAEAkAEAkAFAsAEAkAEA3CUAAGYA1o8r34O2s2oAAAAASUVORK5CYII=" alt="Favicon" class="favicon-logo">
-        <h1 class="logo">CurateSearch</h1>
-      </div>
+      <div class="logo">CurateSearch</div>
       <form class="search-bar-form" id="searchForm" onsubmit="performSearch(event)">
         <div class="search-input-wrapper">
           <svg class="search-icon" viewBox="0 0 24 24">
