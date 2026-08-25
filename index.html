@@ -183,6 +183,39 @@
 
     .go-btn:hover { background-color: #1557b0; }
 
+    /* Filter Bar Section */
+    .filter-bar {
+      width: 100%;
+      display: none;
+      gap: 8px;
+      margin-top: 15px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      box-sizing: border-box;
+    }
+
+    .filter-bar.active { display: flex; }
+
+    .filter-chip {
+      background-color: var(--card-bg);
+      border: 2px solid var(--border-color);
+      color: var(--text-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: clamp(11px, 1.5vw, 13px);
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .filter-chip.active, .filter-chip:hover {
+      background-color: #1a73e8;
+      color: white;
+      border-color: #1a73e8;
+    }
+
     /* Results Content Section */
     .content-section {
       width: 100%;
@@ -333,6 +366,14 @@
           <button type="submit" class="go-btn">Go</button>
         </div>
       </form>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-chip active" onclick="applyFilter('all', this)">All Results</button>
+        <button class="filter-chip" onclick="applyFilter('location', this)">Location</button>
+        <button class="filter-chip" onclick="applyFilter('price', this)">Est. Price</button>
+        <button class="filter-chip" onclick="applyFilter('category', this)">Category</button>
+      </div>
     </div>
 
     <div class="content-section">
@@ -359,20 +400,25 @@
   </div>
 
   <script>
+    let globalResults = [];
+    let currentQuery = '';
+
     function toggleTheme() {
       document.body.classList.toggle('dark-mode');
     }
 
     async function performSearch(event) {
       event.preventDefault();
-      const query = document.getElementById('searchInput').value.trim();
-      if (!query) return;
+      currentQuery = document.getElementById('searchInput').value.trim();
+      if (!currentQuery) return;
 
       const carousel = document.getElementById('carouselContainer');
+      const filterBar = document.getElementById('filterBar');
       carousel.innerHTML = '<p style="padding:20px;">Searching web results...</p>';
+      filterBar.classList.remove('active');
 
       try {
-        const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1`);
+        const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(currentQuery)}&format=json&no_html=1`);
         if (!response.ok) throw new Error('Network response failed');
         const data = await response.json();
         
@@ -400,12 +446,16 @@
 
         if (results.length > 0) {
           await enrichImagesWithWikipedia(results);
-          renderCarousel(results, query);
+          globalResults = results;
+          renderCarousel(globalResults, currentQuery);
+          filterBar.classList.add('active');
         } else {
-          renderFallbackCarousel(query);
+          await renderFallbackCarousel(currentQuery);
+          filterBar.classList.add('active');
         }
       } catch (error) {
-        renderFallbackCarousel(query);
+        await renderFallbackCarousel(currentQuery);
+        filterBar.classList.add('active');
       }
     }
 
@@ -422,9 +472,7 @@
               break;
             }
           }
-        } catch (e) {
-          // Fall back to existing image logic if wiki fetch fails
-        }
+        } catch (e) {}
       }
     }
 
@@ -460,9 +508,6 @@
     }
 
     async function renderFallbackCarousel(query) {
-      const carousel = document.getElementById('carouselContainer');
-      carousel.innerHTML = '';
-      
       const mockItems = [
         { title: query + " - Overview", content: "Explore key details, history, and background information regarding " + query + "." },
         { title: query + " - Core Options", content: "Comprehensive selection of services, features, and specs related to " + query + "." },
@@ -470,24 +515,25 @@
       ];
 
       await enrichImagesWithWikipedia(mockItems);
+      globalResults = mockItems;
+      renderCarousel(globalResults, query);
+    }
 
-      mockItems.forEach((item) => {
-        const card = document.createElement('div');
-        card.className = 'carousel-card';
-        const imgSrc = getCardImage(item, query);
+    function applyFilter(filterType, element) {
+      document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
 
-        card.innerHTML = `
-          <div class="card-img-container">
-            <img src="${imgSrc}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80'">
-          </div>
-          <div class="card-content">
-            <h3>${item.title}</h3>
-            <p>${item.content}</p>
-          </div>
-        `;
-        card.onclick = () => showComparison(item, query);
-        carousel.appendChild(card);
-      });
+      let filtered = [...globalResults];
+      if (filterType === 'location') {
+        filtered = globalResults.filter(item => /mombasa|kenya|nairobi|hotel|property|location/i.test(item.title + " " + item.content));
+        if (filtered.length === 0) filtered = globalResults;
+      } else if (filterType === 'price') {
+        filtered = globalResults.filter(item => /price|rate|cost|value|ksh|\$/i.test(item.title + " " + item.content));
+        if (filtered.length === 0) filtered = globalResults;
+      } else if (filterType === 'category') {
+        filtered = globalResults.reverse();
+      }
+      renderCarousel(filtered, currentQuery);
     }
 
     const industrySchemas = {
