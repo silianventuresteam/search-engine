@@ -254,10 +254,12 @@
     }
 
     .comparison-table th, .comparison-table td {
-      padding: 10px 8px;
+      padding: 12px 10px;
       border-bottom: 1px solid rgba(128, 128, 128, 0.2);
       font-size: 13px;
       word-wrap: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .book-btn {
@@ -295,12 +297,12 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" id="searchInput" class="search-input" autofocus autocomplete="off" placeholder="Search the web...">
+          <input type="text" id="searchInput" class="search-input" autofocus autocomplete="off" placeholder="Search anything (e.g. Laptops, Cars, Crypto)...">
         </div>
         <div class="category-menu">
-          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Flights to Mombasa')">Flights</button>
-          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Hotels in Mombasa')">Hotels & Resorts</button>
-          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Restaurants in Mombasa')">Restaurants</button>
+          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Best Laptops 2026')">Laptops</button>
+          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Electric Cars')">Electric Cars</button>
+          <button type="button" class="pill-btn" onclick="setQueryAndSearch('Smartphones')">Smartphones</button>
         </div>
       </form>
     </div>
@@ -315,9 +317,9 @@
         <table class="comparison-table">
           <thead>
             <tr>
-              <th style="width: 30%;">Provider</th>
-              <th style="width: 25%;">Rate/Price</th>
-              <th style="width: 25%;">Details</th>
+              <th style="width: 32%;">Provider / Model</th>
+              <th style="width: 23%;">Price / Value</th>
+              <th style="width: 25%;">Key Feature</th>
               <th style="width: 20%;">Action</th>
             </tr>
           </thead>
@@ -345,39 +347,76 @@
       if (!query) return;
 
       const carousel = document.getElementById('carouselContainer');
-      carousel.innerHTML = '<p style="padding:20px;">Fetching live search results...</p>';
+      carousel.innerHTML = '<p style="padding:20px;">Searching web results...</p>';
 
       try {
-        const response = await fetch(`https://searx.be/search?q=${encodeURIComponent(query)}&format=json`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        renderCarousel(data.results || [], query);
+        const response = await fetch(`https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`));
+        if (!response.ok) throw new Error('Network response failed');
+        const htmlText = await response.text();
+        
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+        const results = [];
+        
+        doc.querySelectorAll('.result').forEach(el => {
+          const titleEl = el.querySelector('.result__title');
+          const snippetEl = el.querySelector('.result__snippet');
+          if (titleEl) {
+            results.push({
+              title: titleEl.innerText.trim(),
+              content: snippetEl ? snippetEl.innerText.trim() : 'Click to compare specs and pricing'
+            });
+          }
+        });
+
+        if (results.length > 0) {
+          renderCarousel(results, query);
+        } else {
+          renderFallbackCarousel(query);
+        }
       } catch (error) {
         renderFallbackCarousel(query);
       }
+    }
+
+    function getCardImage(title, query) {
+      const text = (title + " " + query).toLowerCase();
+      
+      // Dynamic thematic mapping for any generic search term
+      if (text.includes('laptop') || text.includes('macbook') || text.includes('computer')) {
+        return 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80';
+      } else if (text.includes('car') || text.includes('vehicle') || text.includes('electric') || text.includes('tesla')) {
+        return 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=300&q=80';
+      } else if (text.includes('phone') || text.includes('smartphone') || text.includes('iphone') || text.includes('samsung')) {
+        return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80';
+      } else if (text.includes('hotel') || text.includes('resort') || text.includes('travel')) {
+        return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=300&q=80';
+      } else if (text.includes('food') || text.includes('restaurant') || text.includes('cafe')) {
+        return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=300&q=80';
+      } else if (text.includes('crypto') || text.includes('bitcoin') || text.includes('finance') || text.includes('stock')) {
+        return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=300&q=80';
+      }
+      
+      // Default fallback generic high-res image
+      return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80';
     }
 
     function renderCarousel(results, query) {
       const carousel = document.getElementById('carouselContainer');
       carousel.innerHTML = '';
 
-      if (!results || results.length === 0) {
-        renderFallbackCarousel(query);
-        return;
-      }
-
-      results.slice(0, 6).forEach((item, index) => {
+      results.slice(0, 6).forEach((item) => {
         const card = document.createElement('div');
         card.className = 'carousel-card';
-        const imgSrc = `https://picsum.photos/seed/${encodeURIComponent(item.title || index)}/300/200`;
+        const imgSrc = getCardImage(item.title, query);
         
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${imgSrc}" alt="Thumbnail">
+            <img src="${imgSrc}" alt="${item.title}">
           </div>
           <div class="card-content">
-            <h3>${item.title || 'Option ' + (index + 1)}</h3>
-            <p>${item.content ? item.content : 'Click to compare rates'}</p>
+            <h3>${item.title}</h3>
+            <p>${item.content}</p>
           </div>
         `;
         card.onclick = () => showComparison(item, query);
@@ -389,37 +428,20 @@
       const carousel = document.getElementById('carouselContainer');
       carousel.innerHTML = '';
       
-      let mockItems = [];
-      const lowerQ = query.toLowerCase();
+      const mockItems = [
+        { title: query + " - Premium Edition", content: "Top-rated model featuring high performance and reliability." },
+        { title: query + " - Standard Choice", content: "Cost-effective option with standard industry features." },
+        { title: "Alternative " + query, content: "Highly recommended alternative choice from top vendors." }
+      ];
 
-      if (lowerQ.includes('hotel') || lowerQ.includes('resort')) {
-        mockItems = [
-          { title: "PrideInn Paradise Beach Resort", content: "Luxury beachfront resort with water slides.", url: "#" },
-          { title: "Sarova Whitesands Beach Resort", content: "Renowned 5-star resort along Diani/Mombasa coast.", url: "#" },
-          { title: "Voyager Beach Resort", content: "Vibrant ship-themed resort with family activities.", url: "#" }
-        ];
-      } else if (lowerQ.includes('restaurant') || lowerQ.includes('food')) {
-        mockItems = [
-          { title: "Ali Barbour's Cave Restaurant", content: "Unique dining experience inside an open-air coral cave.", url: "#" },
-          { title: "Tamarind Mombasa", content: "Famous floating seafood restaurant and terrace.", url: "#" },
-          { title: "Forodhani Restaurant", content: "Swahili coastal dishes and vibrant ambiance.", url: "#" }
-        ];
-      } else {
-        mockItems = [
-          { title: "Kenya Airways Options", content: "Direct flights and premium connection schedules.", url: "#" },
-          { title: "Jambojet Specials", content: "Affordable regional flights with flexible timing.", url: "#" },
-          { title: "Fly540 Routes", content: "Reliable alternative carrier services.", url: "#" }
-        ];
-      }
-
-      mockItems.forEach((item, index) => {
+      mockItems.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'carousel-card';
-        const imgSrc = `https://picsum.photos/seed/mock${index}/300/200`;
+        const imgSrc = getCardImage(item.title, query);
 
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${imgSrc}" alt="Thumbnail">
+            <img src="${imgSrc}" alt="${item.title}">
           </div>
           <div class="card-content">
             <h3>${item.title}</h3>
@@ -439,43 +461,24 @@
       title.innerText = `Comparing: ${item.title}`;
       section.classList.add('active');
 
-      let row1Name = "Option Partner A", row2Name = "Option Partner B", row3Name = "Option Partner C";
-      let price1 = "$120", price2 = "$140", price3 = "$160";
-      let detail1 = "Standard Tier", detail2 = "Deluxe Tier", detail3 = "Premium Tier";
-      
-      const lowerQ = (query + item.title).toLowerCase();
-      if (lowerQ.includes('hotel') || lowerQ.includes('resort')) {
-        row1Name = "Booking.com";
-        row2Name = "Expedia";
-        row3Name = "Direct Rate";
-        price1 = "$145/nt"; price2 = "$150/nt"; price3 = "$140/nt";
-        detail1 = "Free Cancel"; detail2 = "Breakfast"; detail3 = "Best Price";
-      } else if (lowerQ.includes('restaurant') || lowerQ.includes('food')) {
-        row1Name = "Standard Table";
-        row2Name = "Garden View";
-        row3Name = "VIP Balcony";
-        price1 = "Free"; price2 = "Free"; price3 = "$20 Dep";
-        detail1 = "Indoor"; detail2 = "Outdoor"; detail3 = "Private";
-      }
-
       tbody.innerHTML = `
         <tr>
-          <td><strong>${row1Name}</strong></td>
-          <td>${price1}</td>
-          <td>${detail1}</td>
-          <td><a href="${item.url !== '#' ? item.url : 'https://example.com'}" target="_blank" class="book-btn">Select</a></td>
+          <td><strong>Vendor Alpha</strong></td>
+          <td>$999.00</td>
+          <td>In Stock / Fast Ship</td>
+          <td><a href="https://example.com" target="_blank" class="book-btn">View Deal</a></td>
         </tr>
         <tr>
-          <td><strong>${row2Name}</strong></td>
-          <td>${price2}</td>
-          <td>${detail2}</td>
-          <td><a href="${item.url !== '#' ? item.url : 'https://example.com'}" target="_blank" class="book-btn">Select</a></td>
+          <td><strong>Global Distributor</strong></td>
+          <td>$950.00</td>
+          <td>Standard Delivery</td>
+          <td><a href="https://example.com" target="_blank" class="book-btn">View Deal</a></td>
         </tr>
         <tr>
-          <td><strong>${row3Name}</strong></td>
-          <td>${price3}</td>
-          <td>${detail3}</td>
-          <td><a href="${item.url !== '#' ? item.url : 'https://example.com'}" target="_blank" class="book-btn">Select</a></td>
+          <td><strong>Direct Retailer</strong></td>
+          <td>$975.00</td>
+          <td>Extended Warranty</td>
+          <td><a href="https://example.com" target="_blank" class="book-btn">View Deal</a></td>
         </tr>
       `;
       section.scrollIntoView({ behavior: 'smooth' });
@@ -483,3 +486,4 @@
   </script>
 </body>
 </html>
+
