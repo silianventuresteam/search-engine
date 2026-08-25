@@ -250,23 +250,28 @@
       width: 100%;
       border-collapse: collapse;
       text-align: left;
+      table-layout: fixed;
     }
 
     .comparison-table th, .comparison-table td {
-      padding: 12px;
+      padding: 10px 8px;
       border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+      font-size: 13px;
+      word-wrap: break-word;
     }
 
     .book-btn {
       background-color: #1a73e8;
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 6px 12px;
+      border-radius: 16px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 12px;
       text-decoration: none;
       display: inline-block;
+      white-space: nowrap;
     }
 
     .book-btn:hover { background-color: #1557b0; }
@@ -310,10 +315,10 @@
         <table class="comparison-table">
           <thead>
             <tr>
-              <th>Provider / Airline</th>
-              <th>Price</th>
-              <th>Duration / Detail</th>
-              <th>Direct Booking</th>
+              <th style="width: 30%;">Provider</th>
+              <th style="width: 25%;">Rate/Price</th>
+              <th style="width: 25%;">Details</th>
+              <th style="width: 20%;">Action</th>
             </tr>
           </thead>
           <tbody id="comparisonTableBody">
@@ -372,10 +377,10 @@
           </div>
           <div class="card-content">
             <h3>${item.title || 'Option ' + (index + 1)}</h3>
-            <p>${item.content ? item.content : 'Click to compare live rates'}</p>
+            <p>${item.content ? item.content : 'Click to compare rates'}</p>
           </div>
         `;
-        card.onclick = () => showComparison(item);
+        card.onclick = () => showComparison(item, query);
         carousel.appendChild(card);
       });
     }
@@ -384,16 +389,33 @@
       const carousel = document.getElementById('carouselContainer');
       carousel.innerHTML = '';
       
-      const mockItems = [
-        { title: "Kenya Airways Options", content: "Direct flights and premium connection schedules.", url: "#" },
-        { title: "Jambojet Specials", content: "Affordable regional flights with flexible timing.", url: "#" },
-        { title: "Fly540 Routes", content: "Reliable alternative carrier services.", url: "#" }
-      ];
+      let mockItems = [];
+      const lowerQ = query.toLowerCase();
+
+      if (lowerQ.includes('hotel') || lowerQ.includes('resort')) {
+        mockItems = [
+          { title: "PrideInn Paradise Beach Resort", content: "Luxury beachfront resort with water slides.", url: "#" },
+          { title: "Sarova Whitesands Beach Resort", content: "Renowned 5-star resort along Diani/Mombasa coast.", url: "#" },
+          { title: "Voyager Beach Resort", content: "Vibrant ship-themed resort with family activities.", url: "#" }
+        ];
+      } else if (lowerQ.includes('restaurant') || lowerQ.includes('food')) {
+        mockItems = [
+          { title: "Ali Barbour's Cave Restaurant", content: "Unique dining experience inside an open-air coral cave.", url: "#" },
+          { title: "Tamarind Mombasa", content: "Famous floating seafood restaurant and terrace.", url: "#" },
+          { title: "Forodhani Restaurant", content: "Swahili coastal dishes and vibrant ambiance.", url: "#" }
+        ];
+      } else {
+        mockItems = [
+          { title: "Kenya Airways Options", content: "Direct flights and premium connection schedules.", url: "#" },
+          { title: "Jambojet Specials", content: "Affordable regional flights with flexible timing.", url: "#" },
+          { title: "Fly540 Routes", content: "Reliable alternative carrier services.", url: "#" }
+        ];
+      }
 
       mockItems.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'carousel-card';
-        const imgSrc = `https://picsum.photos/seed/flight${index}/300/200`;
+        const imgSrc = `https://picsum.photos/seed/mock${index}/300/200`;
 
         card.innerHTML = `
           <div class="card-img-container">
@@ -404,12 +426,12 @@
             <p>${item.content}</p>
           </div>
         `;
-        card.onclick = () => showComparison(item);
+        card.onclick = () => showComparison(item, query);
         carousel.appendChild(card);
       });
     }
 
-    function showComparison(item) {
+    function showComparison(item, query) {
       const section = document.getElementById('comparisonSection');
       const title = document.getElementById('comparisonTitle');
       const tbody = document.getElementById('comparisonTableBody');
@@ -417,24 +439,43 @@
       title.innerText = `Comparing: ${item.title}`;
       section.classList.add('active');
 
+      let row1Name = "Option Partner A", row2Name = "Option Partner B", row3Name = "Option Partner C";
+      let price1 = "$120", price2 = "$140", price3 = "$160";
+      let detail1 = "Standard Tier", detail2 = "Deluxe Tier", detail3 = "Premium Tier";
+      
+      const lowerQ = (query + item.title).toLowerCase();
+      if (lowerQ.includes('hotel') || lowerQ.includes('resort')) {
+        row1Name = "Booking.com";
+        row2Name = "Expedia";
+        row3Name = "Direct Rate";
+        price1 = "$145/nt"; price2 = "$150/nt"; price3 = "$140/nt";
+        detail1 = "Free Cancel"; detail2 = "Breakfast"; detail3 = "Best Price";
+      } else if (lowerQ.includes('restaurant') || lowerQ.includes('food')) {
+        row1Name = "Standard Table";
+        row2Name = "Garden View";
+        row3Name = "VIP Balcony";
+        price1 = "Free"; price2 = "Free"; price3 = "$20 Dep";
+        detail1 = "Indoor"; detail2 = "Outdoor"; detail3 = "Private";
+      }
+
       tbody.innerHTML = `
         <tr>
-          <td><strong>Kenya Airways</strong></td>
-          <td>$150</td>
-          <td>4h 30m (Direct)</td>
-          <td><a href="https://example.com/book?airline=kq" target="_blank" class="book-btn">Book Now</a></td>
+          <td><strong>${row1Name}</strong></td>
+          <td>${price1}</td>
+          <td>${detail1}</td>
+          <td><a href="${item.url !== '#' ? item.url : 'https://example.com'}" target="_blank" class="book-btn">Select</a></td>
         </tr>
         <tr>
-          <td><strong>Jambojet</strong></td>
-          <td>$120</td>
-          <td>5h 00m (1 Stop)</td>
-          <td><a href="https://example.com/book?airline=jambo" target="_blank" class="book-btn">Book Now</a></td>
+          <td><strong>${row2Name}</strong></td>
+          <td>${price2}</td>
+          <td>${detail2}</td>
+          <td><a href="${item.url !== '#' ? item.url : 'https://example.com'}" target="_blank" class="book-btn">Select</a></td>
         </tr>
         <tr>
-          <td><strong>Fly540</strong></td>
-          <td>$135</td>
-          <td>4h 45m (Direct)</td>
-          <td><a href="https://example.com/book?airline=fly540" target="_blank" class="book-btn">Book Now</a></td>
+          <td><strong>${row3Name}</strong></td>
+          <td>${price3}</td>
+          <td>${detail3}</td>
+          <td><a href="${item.url !== '#' ? item.url : 'https://example.com'}" target="_blank" class="book-btn">Select</a></td>
         </tr>
       `;
       section.scrollIntoView({ behavior: 'smooth' });
