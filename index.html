@@ -33,13 +33,36 @@
       transition: none; 
     }
 
-    .theme-switch-container {
+    .top-bar-controls {
       position: absolute;
       top: 20px;
+      left: 20px;
       right: 20px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
       z-index: 100;
+      box-sizing: border-box;
+    }
+
+    .subscribe-btn {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .subscribe-btn:hover { background-color: #1557b0; }
+
+    .theme-switch-wrapper {
+      display: flex;
+      align-items: center;
     }
 
     .switch {
@@ -277,11 +300,14 @@
 </head>
 <body class="dark-mode">
 
-  <div class="theme-switch-container">
-    <label class="switch">
-      <input type="checkbox" id="themeCheckbox" checked onchange="toggleTheme()">
-      <span class="slider"></span>
-    </label>
+  <div class="top-bar-controls">
+    <button class="subscribe-btn" onclick="alert('Thank you for subscribing!')">Subscribe</button>
+    <div class="theme-switch-wrapper">
+      <label class="switch">
+        <input type="checkbox" id="themeCheckbox" checked onchange="toggleTheme()">
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
 
   <div class="main-wrapper">
