@@ -480,6 +480,72 @@
       });
     }
 
+    const industrySchemas = {
+      aviation: {
+        headers: ['Flight / Route', 'Scheduled Time', 'Gate / Status', 'Action'],
+        actionText: 'Flight Info',
+        rows: [
+          { col1: 'KQ 602 (Nairobi)', col2: '06:00 AM', col3: 'Gate 3 / On Time' },
+          { col1: 'ET 308 (Addis Ababa)', col2: '09:30 AM', col3: 'Gate 1 / Boarding' },
+          { col1: 'QR 1341 (Doha)', col2: '01:15 PM', col3: 'Gate 4 / Scheduled' }
+        ]
+      },
+      hospitality: {
+        headers: ['Property / Room', 'Nightly Rate', 'Amenities', 'Action'],
+        actionText: 'Book Room',
+        rows: [
+          { col1: 'Deluxe Suite', col2: '$240.00', col3: 'Ocean View / King Bed' },
+          { col1: 'Standard Room', col2: '$130.00', col3: 'City View / Queen Bed' },
+          { col1: 'Executive Penthouse', col2: '$550.00', col3: 'Private Pool / Lounge' }
+        ]
+      },
+      realestate: {
+        headers: ['Asset / Location', 'Valuation', 'Cap Rate / Yield', 'Action'],
+        actionText: 'View Listing',
+        rows: [
+          { col1: 'Commercial Block A', col2: '$1,250,000', col3: '8.4% Yield' },
+          { col1: 'Residential Villa', col2: '$450,000', col3: '6.2% Yield' },
+          { col1: 'Mixed-Use Plot', col2: '$300,000', col3: 'High Growth' }
+        ]
+      },
+      finance: {
+        headers: ['Instrument', 'Price / NAV', '24h Change', 'Action'],
+        actionText: 'Trade',
+        rows: [
+          { col1: 'S&P 500 ETF', col2: '$512.40', col3: '+1.25%' },
+          { col1: 'Treasury Bond 10Y', col2: '$98.50', col3: '-0.15%' },
+          { col1: 'Global Index Fund', col2: '$145.20', col3: '+0.84%' }
+        ]
+      },
+      automotive: {
+        headers: ['Model / Trim', 'MSRP / Price', 'Specs / Range', 'Action'],
+        actionText: 'Configure',
+        rows: [
+          { col1: 'Performance EV', col2: '$78,500', col3: '380 mi / AWD' },
+          { col1: 'Long Range Sedan', col2: '$52,000', col3: '420 mi / RWD' },
+          { col1: 'Urban Compact', col2: '$34,000', col3: '250 mi / FWD' }
+        ]
+      },
+      default: {
+        headers: ['Provider / Model', 'Price / Value', 'Key Feature', 'Action'],
+        actionText: 'View Deal',
+        rows: [
+          { col1: 'Vendor Alpha', col2: '$999.00', col3: 'In Stock / Fast Ship' },
+          { col1: 'Global Distributor', col2: '$950.00', col3: 'Standard Delivery' },
+          { col1: 'Direct Retailer', col2: '$975.00', col3: 'Extended Warranty' }
+        ]
+      }
+    };
+
+    function detectIndustry(text) {
+      if (/airport|flight|airline|aviation|route/i.test(text)) return 'aviation';
+      if (/hotel|resort|room|stay|bnb|accommodation/i.test(text)) return 'hospitality';
+      if (/property|apartment|house|real estate|land|villa/i.test(text)) return 'realestate';
+      if (/stock|crypto|bond|forex|fund|shares|etf|trading/i.test(text)) return 'finance';
+      if (/car|vehicle|electric|tesla|sedan|suv|automotive/i.test(text)) return 'automotive';
+      return 'default';
+    }
+
     function showComparison(item, query) {
       const section = document.getElementById('comparisonSection');
       const title = document.getElementById('comparisonTitle');
@@ -489,63 +555,20 @@
       title.innerText = `Smart Context: ${item.title}`;
       section.classList.add('active');
 
-      const text = (item.title + " " + query).toLowerCase();
+      const combinedText = (item.title + " " + item.content + " " + query).toLowerCase();
+      const industryKey = detectIndustry(combinedText);
+      const schema = industrySchemas[industryKey];
 
-      if (text.includes('airport') || text.includes('flight') || text.includes('airline')) {
-        headerRow.innerHTML = `
-          <th style="width: 25%;">Flight / Route</th>
-          <th style="width: 20%;">Scheduled Time</th>
-          <th style="width: 30%;">Gate / Status</th>
-          <th style="width: 25%;">Action</th>
-        `;
-        tbody.innerHTML = `
-          <tr>
-            <td><strong>KQ 602 (Nairobi)</strong></td>
-            <td>06:00 AM</td>
-            <td>Gate 3 / On Time</td>
-            <td><a href="https://example.com" target="_blank" class="book-btn">Flight Info</a></td>
-          </tr>
-          <tr>
-            <td><strong>ET 308 (Addis Ababa)</strong></td>
-            <td>09:30 AM</td>
-            <td>Gate 1 / Boarding</td>
-            <td><a href="https://example.com" target="_blank" class="book-btn">Flight Info</a></td>
-          </tr>
-          <tr>
-            <td><strong>QR 1341 (Doha)</strong></td>
-            <td>01:15 PM</td>
-            <td>Gate 4 / Scheduled</td>
-            <td><a href="https://example.com" target="_blank" class="book-btn">Flight Info</a></td>
-          </tr>
-        `;
-      } else {
-        headerRow.innerHTML = `
-          <th style="width: 30%;">Provider / Model</th>
-          <th style="width: 22%;">Price / Value</th>
-          <th style="width: 28%;">Key Feature</th>
-          <th style="width: 20%;">Action</th>
-        `;
-        tbody.innerHTML = `
-          <tr>
-            <td><strong>Vendor Alpha</strong></td>
-            <td>$999.00</td>
-            <td>In Stock / Fast Ship</td>
-            <td><a href="https://example.com" target="_blank" class="book-btn">View Deal</a></td>
-          </tr>
-          <tr>
-            <td><strong>Global Distributor</strong></td>
-            <td>$950.00</td>
-            <td>Standard Delivery</td>
-            <td><a href="https://example.com" target="_blank" class="book-btn">View Deal</a></td>
-          </tr>
-          <tr>
-            <td><strong>Direct Retailer</strong></td>
-            <td>$975.00</td>
-            <td>Extended Warranty</td>
-            <td><a href="https://example.com" target="_blank" class="book-btn">View Deal</a></td>
-          </tr>
-        `;
-      }
+      headerRow.innerHTML = schema.headers.map(h => `<th style="width: 25%;">${h}</th>`).join('');
+
+      tbody.innerHTML = schema.rows.map(row => `
+        <tr>
+          <td><strong>${row.col1}</strong></td>
+          <td>${row.col2}</td>
+          <td>${row.col3}</td>
+          <td><a href="https://example.com" target="_blank" class="book-btn">${schema.actionText}</a></td>
+        </tr>
+      `).join('');
 
       section.scrollIntoView({ behavior: 'smooth' });
     }
