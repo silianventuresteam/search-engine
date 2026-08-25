@@ -117,7 +117,7 @@
       position: sticky;
       top: 0;
       background-color: var(--bg-color);
-      padding: 15px 0;
+      padding: 15px 0 20px 0;
       z-index: 50;
     }
 
@@ -264,10 +264,11 @@
       border-color: #1a73e8;
     }
 
-    /* Results Content Section */
+    /* Results Content Section with top padding to prevent sticky overlap */
     .content-section {
       width: 100%;
-      margin-top: 25px;
+      margin-top: 15px;
+      padding-top: 15px;
       display: flex;
       flex-direction: column;
       align-items: center;
