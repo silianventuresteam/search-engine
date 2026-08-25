@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CurateSearch</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfmCQYQEjR+xX0TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHpJREFUeNrs1cERgCAAQEEwgnb+SVuARw8wM2gH4d9/42J32537c35HwD+fGABXAbwG8BoAkBqgAQwGUAwA4AoAwEoAAMAJAMAJAAAwAACAAQAAsAEAkAEAkAFAsAEAkAEA3CUAAGYA1o8r34O2s2oAAAAASUVORK5CYII=">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -119,11 +120,26 @@
       z-index: 50;
     }
 
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .favicon-logo {
+      width: clamp(32px, 6vw, 44px);
+      height: clamp(32px, 6vw, 44px);
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
     .logo {
       font-size: clamp(32px, 6vw, 48px);
       font-weight: 600;
-      margin-bottom: 15px;
       letter-spacing: -1px;
+      margin: 0;
     }
 
     .search-bar-form {
@@ -182,87 +198,6 @@
     }
 
     .go-btn:hover { background-color: #1557b0; }
-
-    /* Live News Feed Widget (Positioned Right Below Search) */
-    .news-widget {
-      width: 100%;
-      max-width: 650px;
-      background: var(--card-bg);
-      border: 2px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 15px;
-      box-sizing: border-box;
-    }
-
-    .news-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      border-bottom: 1px solid rgba(128,128,128,0.2);
-      padding-bottom: 8px;
-    }
-
-    .news-title {
-      font-size: clamp(15px, 2vw, 18px);
-      font-weight: 600;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #ea4335;
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 0 rgba(234, 67, 53, 0.4);
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.4); }
-      70% { box-shadow: 0 0 0 6px rgba(234, 67, 53, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(234, 67, 53, 0); }
-    }
-
-    .news-feed-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-
-    .news-feed-list::-webkit-scrollbar { width: 4px; }
-    .news-feed-list::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.4); border-radius: 10px; }
-
-    .news-item {
-      padding: 10px;
-      border-radius: 10px;
-      background: var(--bg-color);
-      border: 1px solid rgba(128,128,128,0.2);
-      text-decoration: none;
-      color: var(--text-color);
-      display: block;
-      transition: transform 0.15s;
-    }
-
-    .news-item:hover { transform: translateY(-2px); }
-
-    .news-item-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin: 0 0 4px 0;
-    }
-
-    .news-item-time {
-      font-size: 11px;
-      opacity: 0.7;
-    }
 
     /* Results Content Section */
     .content-section {
@@ -403,7 +338,10 @@
 
   <div class="main-wrapper">
     <div class="search-container">
-      <div class="logo">CurateSearch</div>
+      <div class="logo-wrapper">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfmCQYQEjR+xX0TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHpJREFUeNrs1cERgCAAQEEwgnb+SVuARw8wM2gH4d9/42J32537c35HwD+fGABXAbwG8BoAkBqgAQwGUAwA4AwEvAAMAJAMAJAAAwAACAAQAAsAEAkAEAkAFAsAEAkAEA3CUAAGYA1o8r34O2s2oAAAAASUVORK5CYII=" alt="Favicon" class="favicon-logo">
+        <h1 class="logo">CurateSearch</h1>
+      </div>
       <form class="search-bar-form" id="searchForm" onsubmit="performSearch(event)">
         <div class="search-input-wrapper">
           <svg class="search-icon" viewBox="0 0 24 24">
@@ -414,20 +352,6 @@
           <button type="submit" class="go-btn">Go</button>
         </div>
       </form>
-    </div>
-
-    <!-- Live News Feed Widget (Placed right where you marked) -->
-    <div class="news-widget">
-      <div class="news-header">
-        <h3 class="news-title"><span class="live-dot"></span> Live News Feed</h3>
-        <span id="newsUpdateTimer" style="font-size: 11px; opacity: 0.7;">Auto-updating</span>
-      </div>
-      <div class="news-feed-list" id="newsFeedList">
-        <div class="news-item">
-          <p class="news-item-title">Loading live headlines...</p>
-          <span class="news-item-time">Just now</span>
-        </div>
-      </div>
     </div>
 
     <div class="content-section">
@@ -460,62 +384,6 @@
     function toggleTheme() {
       document.body.classList.toggle('dark-mode');
     }
-
-    async function fetchLiveNews() {
-      const feedList = document.getElementById('newsFeedList');
-      try {
-        const response = await fetch(`https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://html.duckduckgo.com/html/?q=latest+world+news+headlines`));
-        if (!response.ok) throw new Error('Network failed');
-        const htmlText = await response.text();
-        
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
-        const items = [];
-        
-        doc.querySelectorAll('.result').forEach(el => {
-          const titleEl = el.querySelector('.result__title');
-          const snippetEl = el.querySelector('.result__snippet');
-          const linkEl = el.querySelector('.result__url');
-          if (titleEl) {
-            items.push({
-              title: titleEl.innerText.trim(),
-              snippet: snippetEl ? snippetEl.innerText.trim() : '',
-              url: linkEl ? linkEl.innerText.trim() : '#'
-            });
-          }
-        });
-
-        if (items.length > 0) {
-          feedList.innerHTML = '';
-          items.slice(0, 5).forEach((news, idx) => {
-            const timeAgo = `${(idx + 1) * 4} mins ago`;
-            const itemEl = document.createElement('a');
-            itemEl.className = 'news-item';
-            itemEl.href = `https://${news.url}`;
-            itemEl.target = '_blank';
-            itemEl.innerHTML = `
-              <p class="news-item-title">${news.title}</p>
-              <span class="news-item-time">${timeAgo} • ${news.snippet.substring(0, 60)}...</span>
-            `;
-            feedList.appendChild(itemEl);
-          });
-        }
-      } catch (e) {
-        feedList.innerHTML = `
-          <div class="news-item">
-            <p class="news-item-title">Global Markets and Tech Sector Show Steady Growth</p>
-            <span class="news-item-time">5 mins ago • Live feed operational</span>
-          </div>
-          <div class="news-item">
-            <p class="news-item-title">New Infrastructure Updates Roll Out Globally</p>
-            <span class="news-item-time">12 mins ago • Live feed operational</span>
-          </div>
-        `;
-      }
-    }
-
-    fetchLiveNews();
-    setInterval(fetchLiveNews, 60000);
 
     async function performSearch(event) {
       event.preventDefault();
